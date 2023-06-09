@@ -1,19 +1,43 @@
 from pytube import YouTube
-from sys import argv
+import os
+import subprocess
 
 
-link = argv[1]
-yt = YouTube(link)
-yd = yt.streams.get_highest_resolution()
+class YTDownloader:
+
+    def __init__(self, download_path="C:/Users/blawa/Desktop/youtube_download"):
+        self.link = None
+        self.download_path = download_path
+
+        get_url = input("Enter the URL of the video you want to download: ")
+        self.link = get_url
+
+        yt = YouTube(self.link)
+
+        # Get the highest resolution video-only stream
+        video_stream = yt.streams.filter(only_video=True).order_by('resolution').desc().first()
+
+        # Get the highest quality audio-only stream
+        audio_stream = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
+
+        print("Title: ", yt.title)
+        print("Views: ", yt.views)
+        print("Video Resolution: ", video_stream.resolution)
+
+        video_filename = video_stream.download(output_path=self.download_path, filename="video")
+        audio_filename = audio_stream.download(output_path=self.download_path, filename="audio")
+
+        # Combine video and audio using FFmpeg, and convert audio to AAC format
+        output_file = os.path.join(self.download_path, f"{yt.title}.mp4")
+        cmd = f'ffmpeg -i "{video_filename}" -i "{audio_filename}" -c:v copy -c:a aac "{output_file}"'
+        subprocess.run(cmd, shell=True)
+
+        # Optionally, delete the separate video and audio files
+        os.remove(video_filename)
+        os.remove(audio_filename)
+
+        print("Download and merge completed!")
 
 
-
-print("Title: ", yt.title)
-print("Number of views: ", yt.views)
-print("Length of video: ", yt.length, "seconds")
-
-
-download_path = "C:/Users/blawa/Desktop/youtube_download"
-
-yd.download(download_path)
-
+if __name__ == "__main__":
+    YTDownloader()
