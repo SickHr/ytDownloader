@@ -36,7 +36,10 @@ class YTDownloader:
         os.remove(video_filename)
         os.remove(audio_filename)
 
+
+        print(f" " + "\n" * 20 )
         print("Download and merge completed!")
+        YTDownloader()
 
 
 if __name__ == "__main__":
