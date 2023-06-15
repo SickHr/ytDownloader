@@ -1,14 +1,14 @@
 from pytube import YouTube
 import os
 import subprocess
-import interface
+import json
 
 
 class YTDownloader:
     # Initialize the class
     def __init__(self, link):
         self.link = link
-        self.download_path = "C:/Users/blawa/Desktop/youtube_download"
+        self.download_path = json.load(open("config.json", "r"))["download_path"]
 
 
         yt = YouTube(self.link)
