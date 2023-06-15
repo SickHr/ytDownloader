@@ -8,7 +8,7 @@ class YTDownloader:
     # Initialize the class
     def __init__(self, link):
         self.link = link
-        self.download_path = ""
+        self.download_path = ""    # URL
 
 
         yt = YouTube(self.link)
